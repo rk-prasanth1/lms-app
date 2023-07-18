@@ -5,9 +5,9 @@ pipeline {
 
     environment {
 
-    DOCKERHUB_CREDENTIALS = credentials('dockeruser')
+    DOCKERHUB_CREDENTIALS = credentials('dockerid')
      registry = "prasanthrk/frontend-lms"
-        registryCredential = 'dockerhub'
+        registryCredential = 'dockerid'
     }
 
     stages {
