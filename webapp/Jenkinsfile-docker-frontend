@@ -15,28 +15,28 @@ pipeline {
 
         stage('Building the docker image') {
             steps {
-                sh 'cd webapp && docker build -t prasanthrk/frontend-lms .'
+                sh 'cd webapp && sudo docker build -t prasanthrk/frontend-lms .'
             }
         }
         stage('Logging into dockerhub account') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'docker push prasanthrk/frontend-lms'
+                  sh 'sudo docker push prasanthrk/frontend-lms'
             }
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'docker rmi -f prasanthrk/frontend-lms'
+                 sh 'sudo docker rmi -f prasanthrk/frontend-lms'
             }
         }
          stage('Running the docker container') {
             steps {
-                  sh 'docker container rm --force fe'
-                  sh 'docker run -dt -p 3000:80 --name fe prasanthrk/frontend-lms'
+                  sh 'sudo docker container rm --force fe'
+                  sh 'sudo docker run -dt -p 3000:80 --name fe prasanthrk/frontend-lms'
             }
         }
     }
