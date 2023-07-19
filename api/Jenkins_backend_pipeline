@@ -37,7 +37,7 @@ pipeline {
          stage('creating database container') {
              steps {
                  sh 'sudo docker container rm --force lmsdb'
-                 sh 'sudo rm --force lmsnetwork'
+                 sh 'sudo docker network rm lmsnetwork'
                  sh 'sudo docker network create -d bridge lmsnetwork'
                  sh 'sudo docker run -d -p 5432:5432 --network lmsnetwork -e  POSTGRES_PASSWORD=password --name lmsdb postgres'
             }
