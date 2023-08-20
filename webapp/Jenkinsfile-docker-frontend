@@ -4,15 +4,12 @@ pipeline {
     }
 
     environment {
-
     DOCKERHUB_CREDENTIALS = credentials('dockerid')
      registry = "prasanthrk/frontend"
         registryCredential = 'dockerid'
     }
 
     stages {
-        
-
         stage('Building the docker image') {
             steps {
                 sh 'cd webapp && sudo docker build -t prasanthrk/frontend .'
