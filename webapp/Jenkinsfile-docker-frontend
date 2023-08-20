@@ -1,12 +1,12 @@
 pipeline {
     agent {
-      label 'docker'
+      label 'kubernetes'
     }
 
     environment {
 
     DOCKERHUB_CREDENTIALS = credentials('dockerid')
-     registry = "prasanthrk/frontend-lms"
+     registry = "prasanthrk/frontend"
         registryCredential = 'dockerid'
     }
 
@@ -15,7 +15,7 @@ pipeline {
 
         stage('Building the docker image') {
             steps {
-                sh 'cd webapp && sudo docker build -t prasanthrk/frontend-lms .'
+                sh 'cd webapp && sudo docker build -t prasanthrk/frontend .'
             }
         }
         stage('Logging into dockerhub account') {
@@ -25,18 +25,20 @@ pipeline {
         }
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'sudo docker push prasanthrk/frontend-lms'
+                  sh 'sudo docker push prasanthrk/frontend'
             }
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'sudo docker rmi -f prasanthrk/frontend-lms'
+                 sh 'sudo docker rmi -f prasanthrk/frontend'
             }
         }
-         stage('Running the docker container') {
+         stage('deploy on kubernetes') {
             steps {
-                  sh 'sudo docker container rm --force fe'
-                  sh 'sudo docker run -dt -p 3000:80 --name fe prasanthrk/frontend-lms'
+                echo 'Deploying....'
+                sh "cd webapp && kubectl apply -f frontend-deployment.yaml"
+                sh "cd webapp && kubectl apply -f frontend-load-balancer-service.yaml"
+                sh "kubectl rollout restart deployment frontend-deployment"
             }
         }
     }
