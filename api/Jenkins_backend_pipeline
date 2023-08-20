@@ -1,6 +1,6 @@
 pipeline {
     agent{
-       label 'docker'
+       label 'kubernetes'
     }
 
     environment {
@@ -34,18 +34,15 @@ pipeline {
                  sh 'sudo docker rmi -f prasanthrk/backend-lms'
             }
         }
-         stage('creating database container') {
-             steps {
-                 sh 'sudo docker network rm --force lmsnetwork'
-                 sh 'sudo docker container rm --force lmsdb'
-                 sh 'sudo docker network create -d bridge lmsnetwork'
-                 sh 'sudo docker run -d -p 5432:5432 --network lmsnetwork -e  POSTGRES_PASSWORD=password --name lmsdb postgres'
-            }
-        }
-         stage('Running the docker container') {
+         stage('deploy on kubernetes') {
             steps {
-                  sh 'sudo docker container rm --force backend'
-                  sh 'sudo docker run -d -p 8080:8080 --network lmsnetwork -e DATABASE_URL=postgresql://postgres:password@lmsdb:5432/postgres --name backend -e PORT=8080 -e MODE=local  prasanthrk/backend-lms'
+                echo 'Deploying....'
+                 sh "cd api && kubectl apply -f database-persistent-volume-claim.yaml"
+                 sh "cd api && kubectl apply -f postgres-deployment.yaml"
+                 sh "cd api && kubectl apply -f postgres-cluster-ip-service.yaml"
+                 sh "cd api && kubectl apply -f api-deployment.yaml"
+                 sh "cd api && kubectl apply -f api-load-balancer-service.yaml"
+                 sh "kubectl rollout restart deployment api-deployment"
             }
         }
     }
