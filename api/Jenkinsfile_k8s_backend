@@ -4,7 +4,6 @@ pipeline {
     }
 
     environment {
-
     DOCKERHUB_CREDENTIALS = credentials('dockerid')
      registry = "prasanthrk/backend-lms"
         registryCredential = 'dockerid'
@@ -12,8 +11,6 @@ pipeline {
     }
 
     stages {
-        
-        
         stage('Building the docker image') {
             steps {
                 sh 'cd api && sudo docker build -t prasanthrk/backend .'
@@ -26,12 +23,12 @@ pipeline {
         }
         stage('pushing the docker image into dockerhub') {
             steps {
-                  sh 'sudo docker push prasanthrk/backend-lms'
+                  sh 'sudo docker push prasanthrk/backend'
             }
         }
         stage('Remove old docker images') {
              steps {
-                 sh 'sudo docker rmi -f prasanthrk/backend-lms'
+                 sh 'sudo docker rmi -f prasanthrk/backend'
             }
         }
          stage('deploy on kubernetes') {
