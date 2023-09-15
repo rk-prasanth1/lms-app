@@ -16,6 +16,7 @@ pipeline {
         }
          stage('creating database container') {
              steps {
+                 sh 'docker network prune -f'
                  sh 'sudo docker network rm --force lmsnetwork'
                  sh 'sudo docker container rm --force lmsdb'
                  sh 'sudo docker network create -d bridge lmsnetwork'
