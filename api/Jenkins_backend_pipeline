@@ -1,34 +1,14 @@
 pipeline {
-    agent{
-       label 'docker'
-    }
-
-    environment {
-
-    DOCKERHUB_CREDENTIALS = credentials('dockerid')
-     registry = "prasanthrk/backend-lms"
-        registryCredential = 'dockerid'
-        dockerImage = ''
-    }
+    agent any
 
     stages {
-        
         
         stage('Building the docker image') {
             steps {
                 sh 'cd api && sudo docker build -t prasanthrk/backend-lms .'
             }
         }
-        stage('Logging into dockerhub account') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-            }
-        }
-        stage('pushing the docker image into dockerhub') {
-            steps {
-                  sh 'sudo docker push prasanthrk/backend-lms'
-            }
-        }
+
         stage('Remove old docker images') {
              steps {
                  sh 'sudo docker rmi -f prasanthrk/backend-lms'
