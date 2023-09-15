@@ -16,7 +16,7 @@ pipeline {
         }
          stage('creating database container') {
              steps {
-                 sh 'sudo docker network disconnect -f lmsnetwork'
+                 sh 'sudo docker network disconnect -f lmsnetwork lmsdb'
                  sh 'sudo docker network rm lmsnetwork'
                  sh 'sudo docker container rm --force lmsdb'
                  sh 'sudo docker network create -d bridge lmsnetwork'
